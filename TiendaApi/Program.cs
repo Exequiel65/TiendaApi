@@ -1,9 +1,12 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using TiendaApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.ConfigureCors();
 var connectionString = "server=localhost; port=3306; database=TiendaApi; user=root; password=; Persist Security Info=False; Connect Timeout=300";
 
 var serverVersion = new MySqlServerVersion(new Version(10, 4, 27));
@@ -53,6 +56,8 @@ using(var scope = app.Services.CreateScope())
         throw;
     }
 }
+
+app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();
 
