@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Entities.Models
 {
-    public class Categoria : BaseEntity
-    { 
-        public string Nombre { get; set; }
-        public ICollection<Producto> Productos { get; set; }
+    public class BaseEntity
+    {
+        public int Id { get; set; }
     }
 }

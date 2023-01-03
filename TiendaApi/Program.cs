@@ -1,12 +1,14 @@
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using TiendaApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddAutoMapper(Assembly.GetEntryAssembly());
 builder.Services.ConfigureCors();
+builder.Services.AddAplicacionServices();
 var connectionString = "server=localhost; port=3306; database=TiendaApi; user=root; password=; Persist Security Info=False; Connect Timeout=300";
 
 var serverVersion = new MySqlServerVersion(new Version(10, 4, 27));
