@@ -52,7 +52,7 @@ namespace Negocio
             }
         }
 
-        public async int SaveAsync()
+        public async Task<int> SaveAsync()
         {
             return await _context.SaveChangesAsync();
         }

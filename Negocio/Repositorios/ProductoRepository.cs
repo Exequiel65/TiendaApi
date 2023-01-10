@@ -36,6 +36,18 @@ namespace Negocio.Repositorios
                             .Include(p => p.Categoria)
                             .ToListAsync();
         }
+
+        public override async Task<(int totalRegistros, IEnumerable<Producto> registros)> GetAllAsync(int pageIndex, int pageSize)
+        {
+            var totalRegistros = await _context.Productos.CountAsync();
+            var registros = await _context.Productos
+                                .Include(u => u.Marca)
+                                .Include(U => U.Categoria)
+                                .Skip((pageIndex - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToListAsync();
+            return (totalRegistros, registros);
+        }
     }
 
 }

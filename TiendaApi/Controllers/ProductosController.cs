@@ -7,11 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using Negocio;
 using Negocio.Interfaces;
 using TiendaApi.Dtos;
+using TiendaApi.Helpers;
 
 namespace TiendaApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [ApiVersion("1.1")]
     public class ProductosController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -24,13 +27,29 @@ namespace TiendaApi.Controllers
         }
 
         [HttpGet]
+        
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<ProductoListDto>>> Get()
+        public async Task<ActionResult<Pager<ProductoListDto>>> Get([FromQuery]Params productParams)
+        {
+            var resultado = await _unitOfWork.Productos.GetAllAsync(productParams.PageIndex, productParams.PageSize);
+
+            var listaProductosDto = _mapper.Map<List<ProductoListDto>>(resultado.registros);
+
+            return new Pager<ProductoListDto>(listaProductosDto, resultado.totalRegistros, productParams.PageIndex, productParams.PageSize );
+
+            
+        }
+
+        [HttpGet]
+        [MapToApiVersion("1.1")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> Get11()
         {
             var productos = await _unitOfWork.Productos.GetAllAsync();
 
-            return Ok(_mapper.Map<List<ProductoListDto>>(productos));
+            return Ok(_mapper.Map<List<ProductoDto>>(productos));
         }
 
         // Por parametro
@@ -51,10 +70,11 @@ namespace TiendaApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Producto>> Post(Producto producto)
+        public async Task<ActionResult<Producto>> Post(ProductoAddUpdateDto productoDto)
         {
+            var producto = _mapper.Map<Producto>(productoDto);
             _unitOfWork.Productos.Add(producto);
-            _unitOfWork.Save();
+            await _unitOfWork.SaveAsync();
             if (producto == null)
             {
                 return BadRequest();
@@ -67,19 +87,20 @@ namespace TiendaApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Producto>> Put(int id, [FromBody]Producto producto)
+        public async Task<ActionResult<ProductoAddUpdateDto>> Put(int id, [FromBody] ProductoAddUpdateDto productoDto)
         {
-            if(producto == null){
+            if (productoDto == null)
+            {
                 return NotFound();
             }
-            if(producto.Id != id)
+            if (productoDto.Id != id)
             {
                 return BadRequest();
             }
-
+            var producto = _mapper.Map<Producto>(productoDto);
             _unitOfWork.Productos.Update(producto);
-            _unitOfWork.Save();
-            return producto;
+            await _unitOfWork.SaveAsync();
+            return productoDto;
         }
 
         [HttpDelete("{id}")]
@@ -92,9 +113,9 @@ namespace TiendaApi.Controllers
             {
                 return NotFound();
             }
-            
+
             _unitOfWork.Productos.Remove(productos);
-            _unitOfWork.Save();
+            await _unitOfWork.SaveAsync();
             return NoContent();
         }
     }

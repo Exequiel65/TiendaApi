@@ -14,6 +14,8 @@ namespace Negocio.Interfaces
         Task<T> GetByIdAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();
         IEnumerable<T> Find(Expression<Func<T, bool>> expresion);
+
+        Task<(int totalRegistros, IEnumerable<T> registros)> GetAllAsync(int pageIndex, int pageSize);
         void Add(T entities); 
         void Update(T entity);
         void Remove(T entity);

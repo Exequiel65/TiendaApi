@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddAutoMapper(Assembly.GetEntryAssembly());
+builder.Services.ConfigureRateLimitiong();
+builder.Services.ConfigureApiVersioning();
 builder.Services.ConfigureCors();
 builder.Services.AddAplicacionServices();
 var connectionString = "server=localhost; port=3306; database=TiendaApi; user=root; password=; Persist Security Info=False; Connect Timeout=300";
@@ -26,13 +29,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.RespectBrowserAcceptHeader= true;
+    options.ReturnHttpNotAcceptable= true;
+}).AddXmlSerializerFormatters();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseIpRateLimiting();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
