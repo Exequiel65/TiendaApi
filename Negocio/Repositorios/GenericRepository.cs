@@ -14,7 +14,7 @@ namespace Negocio.Repositorios
             _context = context;
         }
 
-        public virtual async Task<(int totalRegistros, IEnumerable<T> registros)> GetAllAsync(int pageIndex, int pageSize)
+        public virtual async Task<(int totalRegistros, IEnumerable<T> registros)> GetAllAsync(int pageIndex, int pageSize, string search)
         {
             var totalRegistros = await _context.Set<T>().CountAsync();
             var registros = await _context.Set<T>()

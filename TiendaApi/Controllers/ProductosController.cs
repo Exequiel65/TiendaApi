@@ -32,11 +32,12 @@ namespace TiendaApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Pager<ProductoListDto>>> Get([FromQuery]Params productParams)
         {
-            var resultado = await _unitOfWork.Productos.GetAllAsync(productParams.PageIndex, productParams.PageSize);
+            var resultado = await _unitOfWork.Productos.GetAllAsync(productParams.PageIndex, productParams.PageSize, productParams.Search);
 
             var listaProductosDto = _mapper.Map<List<ProductoListDto>>(resultado.registros);
+            Response.Headers.Add("X-InLineCount", resultado.totalRegistros.ToString());
 
-            return new Pager<ProductoListDto>(listaProductosDto, resultado.totalRegistros, productParams.PageIndex, productParams.PageSize );
+            return new Pager<ProductoListDto>(listaProductosDto, resultado.totalRegistros, productParams.PageIndex, productParams.PageSize, productParams.Search );
 
             
         }
