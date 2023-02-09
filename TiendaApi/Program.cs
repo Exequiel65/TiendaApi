@@ -56,7 +56,7 @@ using(var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
         await TiendaContextSeed.SeedAsync(context, loggerFactory);
-
+        await TiendaContextSeed.SeedRolesAsync(context, loggerFactory);
     }
     catch (Exception exception)
     {

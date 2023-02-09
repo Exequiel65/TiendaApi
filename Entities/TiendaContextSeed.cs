@@ -78,5 +78,29 @@ namespace Entities
 				throw;
 			}
         }
+
+        public static async Task SeedRolesAsync(ApplicationDbContext context, ILoggerFactory loggerFactory)
+        {
+            try
+            {
+                if (!context.Roles.Any())
+                {
+                    var roles = new List<Rol>()
+                    {
+                        new Rol {Id = 1, Nombre = "Administrador"},
+                        new Rol {Id = 2, Nombre = "Gerente"},
+                        new Rol {Id = 3, Nombre = "Empleado"},
+                    };
+                    context.Roles.AddRange(roles);
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = loggerFactory.CreateLogger<TiendaContextSeed>();
+                logger.LogError(ex.Message);
+                throw;
+            }
+        }
     }
 }
