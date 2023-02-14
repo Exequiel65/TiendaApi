@@ -21,5 +21,13 @@ namespace TiendaApi.Controllers
             var result = await _userService.RegisterAsync(model);
             return Ok(result);
         }
+
+        [HttpPost("token")] 
+        public async Task<ActionResult> GetTokenAsync (LoginDto model)
+        {
+            var result = await _userService.GetTokenAsync(model);
+            return Ok(result);
+        }
+
     }
 }
