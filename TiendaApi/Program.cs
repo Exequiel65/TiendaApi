@@ -12,6 +12,7 @@ builder.Services.ConfigureRateLimitiong();
 builder.Services.ConfigureApiVersioning();
 builder.Services.ConfigureCors();
 builder.Services.AddAplicacionServices();
+builder.Services.AddJwt(builder.Configuration);
 var connectionString = "server=localhost; port=3306; database=TiendaApi; user=root; password=; Persist Security Info=False; Connect Timeout=300";
 
 var serverVersion = new MySqlServerVersion(new Version(10, 4, 27));

@@ -1,12 +1,16 @@
 ﻿
 using AspNetCoreRateLimit;
 using Entities.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.IdentityModel.Tokens;
 using Negocio;
 using Negocio.Interfaces;
 using Negocio.Repositorios;
+using System.Text;
+using TiendaApi.Helpers;
 using TiendaApi.Services;
 
 namespace TiendaApi.Extensions
@@ -72,6 +76,35 @@ namespace TiendaApi.Extensions
 
 
             });
+        }
+
+        public static void AddJwt(this IServiceCollection services, IConfiguration configuration)
+        {
+            //Configuration from AppSettings
+            services.Configure<JWT>(configuration.GetSection("JWT"));
+
+            // Adding Authentication - JWT
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(o =>
+                {
+                    o.RequireHttpsMetadata = false;
+                    o.SaveToken = false;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero,
+                        ValidIssuer = configuration["JWT:Issuer"],
+                        ValidAudience = configuration["JWT:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]))
+                    };
+                });
         }
     }
 }
