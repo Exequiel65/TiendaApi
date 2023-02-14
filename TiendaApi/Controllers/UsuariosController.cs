@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TiendaApi.Dtos;
 using TiendaApi.Services;
 
 namespace TiendaApi.Controllers
@@ -13,7 +14,12 @@ namespace TiendaApi.Controllers
         public UsuariosController(IUserService userService) {
             _userService = userService;
 
-
+        }
+        [HttpPost("register")]
+        public async Task<ActionResult> RegisterAsync(RegisterDto model)
+        {
+            var result = await _userService.RegisterAsync(model);
+            return Ok(result);
         }
     }
 }

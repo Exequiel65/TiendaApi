@@ -9,5 +9,6 @@ namespace Negocio.Interfaces
 {
     public interface IUsuarioRepository : IGenericRepository<Usuario>
     {
+        Task<Usuario> GetByUserNameAsync(string userName);
     }
 }
