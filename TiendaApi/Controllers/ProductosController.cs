@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Entities;
 using Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace TiendaApi.Controllers
     [ApiController]
     [ApiVersion("1.0")]
     [ApiVersion("1.1")]
+    [Authorize(Roles = "Administrador")]
     public class ProductosController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
